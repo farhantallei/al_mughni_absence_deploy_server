@@ -1,0 +1,23 @@
+{
+  "name": "al-mughni-absence",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "repl": "node main.js"
+  },
+  "keywords": [],
+  "author": "Kam Lasater <kam.lasater@cyclic.sh>",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "@fastify/sensible": "^5.2.0",
+    "@fastify/type-provider-typebox": "^2.4.0",
+    "@prisma/client": "^4.9.0",
+    "@sinclair/typebox": "^0.25.21",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.12.0"
+  }
+}
