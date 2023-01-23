@@ -2,15 +2,16 @@
   "name": "al-mughni-absence",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "repl": "node main.js"
+    "repl": "node index.js"
   },
   "keywords": [],
   "author": "Kam Lasater <kam.lasater@cyclic.sh>",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "prisma": "^4.9.0"
   },
   "dependencies": {
     "@fastify/sensible": "^5.2.0",
