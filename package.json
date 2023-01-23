@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "repl": "\"npx prisma generate\" \"node index.js\""
+    "repl": "\"npx prisma db push\" \"node index.js\""
   },
   "keywords": [],
   "author": "Kam Lasater <kam.lasater@cyclic.sh>",
