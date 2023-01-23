@@ -13,6 +13,9 @@ exports.programRoutes = void 0;
 const program_handlers_1 = require("./program.handlers");
 const program_schemas_1 = require("./program.schemas");
 const programRoutes = (route) => __awaiter(void 0, void 0, void 0, function* () {
+    route.get('/', (request, reply) => {
+        reply.send('Hello world!');
+    });
     route.get('/:pelajarId', {
         schema: program_schemas_1.GetProgramListSchema,
         handler: program_handlers_1.GetProgramListHandler,
