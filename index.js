@@ -36,7 +36,7 @@ mongoose_1.default.set('strictPopulate', true);
 mongoose_1.default
     .connect(env_1.DATABASE_URL)
     .then(() => {
-    app_1.default.listen({ port: env_1.PORT, host: '192.168.1.12' }, (err, address) => {
+    app_1.default.listen({ port: env_1.PORT }, (err, address) => {
         if (err) {
             console.error(err.message);
             return process.exit(1);
