@@ -67,5 +67,14 @@ exports.DeleteScheduleSchema = {
         programId: data_type_1.DataType.id,
         date: data_type_1.DataType.date,
     }),
-    response: { 204: typebox_1.Type.Object({}) },
+    response: {
+        200: typebox_1.Type.Object({
+            id: data_type_1.DataType.id,
+            pengajarId: data_type_1.DataType.id,
+            programId: data_type_1.DataType.id,
+            date: data_type_1.DataType.date,
+            available: typebox_1.Type.Boolean(),
+            reason: typebox_1.Type.Union([typebox_1.Type.String(), typebox_1.Type.Null()]),
+        }),
+    },
 };

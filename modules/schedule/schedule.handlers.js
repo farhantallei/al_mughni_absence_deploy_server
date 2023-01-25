@@ -102,7 +102,14 @@ const DeleteScheduleHandler = (request, reply) => __awaiter(void 0, void 0, void
         });
         if (!schedule)
             return reply.notFound('Schedule is not found.');
-        return reply.code(204).send({});
+        return reply.send({
+            id: schedule._id.toString(),
+            pengajarId: schedule.pengajarId.toString(),
+            programId: schedule.programId.toString(),
+            date: (0, formatDate_1.formatDate)(new Date(date)),
+            available: schedule.available,
+            reason: schedule.reason || null,
+        });
     }
     catch (error) {
         return reply.internalServerError(`Error: ${error}`);
