@@ -27,13 +27,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const os_1 = require("os");
 const app_1 = __importStar(require("./app"));
 const env_1 = require("./env");
 (0, app_1.addPlugins)();
 (0, app_1.addRoutes)();
 mongoose_1.default.set('strictQuery', false);
 mongoose_1.default.set('strictPopulate', true);
-console.log('kjashdkuwdnkwn');
+const nets = (0, os_1.networkInterfaces)();
+const results = Object.create(null);
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4;
+        if (net.family === familyV4Value && !net.internal) {
+            if (!results[name]) {
+                results[name] = [];
+            }
+            results[name].push(net.address);
+        }
+    }
+}
+console.log(results);
 mongoose_1.default
     .connect(env_1.DATABASE_URL)
     .then(() => {
