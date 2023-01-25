@@ -45,6 +45,7 @@ mongoose_1.default
     });
 })
     .catch((err) => {
+    console.log('kjashdkuwdnkwn');
     console.error(err.message);
     return process.exit(1);
 });
