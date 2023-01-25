@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateScheduleHandler = exports.AddScheduleHandler = exports.GetScheduleHandler = void 0;
+exports.DeleteScheduleHandler = exports.UpdateScheduleHandler = exports.AddScheduleHandler = exports.GetScheduleHandler = void 0;
 const models_1 = require("../../models");
 const formatDate_1 = require("../../utils/formatDate");
 const GetScheduleHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,3 +92,20 @@ const UpdateScheduleHandler = (request, reply) => __awaiter(void 0, void 0, void
     }
 });
 exports.UpdateScheduleHandler = UpdateScheduleHandler;
+const DeleteScheduleHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+    const { pengajarId, programId, date } = request.body;
+    try {
+        const schedule = yield models_1.Schedule.findOneAndDelete({
+            pengajarId,
+            programId,
+            date,
+        });
+        if (!schedule)
+            return reply.notFound('Schedule is not found.');
+        return reply.code(204).send({});
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
+});
+exports.DeleteScheduleHandler = DeleteScheduleHandler;

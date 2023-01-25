@@ -25,5 +25,9 @@ const scheduleRoutes = (route) => __awaiter(void 0, void 0, void 0, function* ()
         schema: schedule_schemas_1.UpdateScheduleSchema,
         handler: schedule_handlers_1.UpdateScheduleHandler,
     });
+    route.delete('/', {
+        schema: schedule_schemas_1.DeleteScheduleSchema,
+        handler: schedule_handlers_1.DeleteScheduleHandler,
+    });
 });
 exports.scheduleRoutes = scheduleRoutes;
