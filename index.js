@@ -33,6 +33,7 @@ const env_1 = require("./env");
 (0, app_1.addRoutes)();
 mongoose_1.default.set('strictQuery', false);
 mongoose_1.default.set('strictPopulate', true);
+console.log('kjashdkuwdnkwn');
 mongoose_1.default
     .connect(env_1.DATABASE_URL)
     .then(() => {
@@ -45,7 +46,6 @@ mongoose_1.default
     });
 })
     .catch((err) => {
-    console.log('kjashdkuwdnkwn');
     console.error(err.message);
     return process.exit(1);
 });
