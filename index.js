@@ -34,20 +34,16 @@ const env_1 = require("./env");
 (0, app_1.addRoutes)();
 mongoose_1.default.set('strictQuery', false);
 mongoose_1.default.set('strictPopulate', true);
-const nets = (0, os_1.networkInterfaces)();
-const results = Object.create(null);
-for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4;
-        if (net.family === familyV4Value && !net.internal) {
-            if (!results[name]) {
-                results[name] = [];
-            }
-            results[name].push(net.address);
+const interfaces = (0, os_1.networkInterfaces)();
+const addresses = [];
+for (let key in interfaces) {
+    interfaces[key].forEach(function (details) {
+        if (details.family === 'IPv4') {
+            addresses.push(details.address);
         }
-    }
+    });
 }
-console.log(results);
+console.log(addresses);
 mongoose_1.default
     .connect(env_1.DATABASE_URL)
     .then(() => {
