@@ -1,5 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commitToDB = void 0;
-var commitToDB_1 = require("./commitToDB");
-Object.defineProperty(exports, "commitToDB", { enumerable: true, get: function () { return commitToDB_1.commitToDB; } });
+exports.formatDate = void 0;
+var formatDate_1 = require("./formatDate");
+Object.defineProperty(exports, "formatDate", { enumerable: true, get: function () { return formatDate_1.formatDate; } });

@@ -17,9 +17,9 @@ const program_routes_1 = require("../modules/program/program.routes");
 const schedule_routes_1 = require("../modules/schedule/schedule.routes");
 const routes = (route) => __awaiter(void 0, void 0, void 0, function* () {
     route.register(pelajar_routes_1.pelajarRoutes, { prefix: 'pelajar' });
-    route.register(pengajar_routes_1.pengajarRoutes, { prefix: 'pengajar' });
-    route.register(absent_routes_1.absentRoutes, { prefix: 'absent' });
     route.register(program_routes_1.programRoutes, { prefix: 'program' });
+    route.register(pengajar_routes_1.pengajarRoutes, { prefix: 'pengajar' });
     route.register(schedule_routes_1.scheduleRoutes, { prefix: 'schedule' });
+    route.register(absent_routes_1.absentRoutes, { prefix: 'absent' });
 });
 exports.routes = routes;

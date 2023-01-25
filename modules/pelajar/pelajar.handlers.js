@@ -10,29 +10,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidationHandler = exports.LoginHandler = exports.RegisterHandler = void 0;
-const pelajar_services_1 = require("./pelajar.services");
+const models_1 = require("../../models");
 const RegisterHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, name } = request.body;
-    const pelajar = yield (0, pelajar_services_1.getPelajar)(reply, { username });
-    if (pelajar)
-        return reply.badRequest('Username is already taken.');
-    const newPelajar = yield (0, pelajar_services_1.createPelajar)(reply, { username, name });
-    return reply.code(201).send(newPelajar);
+    try {
+        const pelajar = yield models_1.Pelajar.findOne({ username });
+        if (pelajar)
+            return reply.badRequest('Username is already taken.');
+        const newPelajar = yield models_1.Pelajar.create({ username, name });
+        return reply.code(201).send({
+            id: newPelajar._id,
+            username: newPelajar.username,
+            name: newPelajar.name,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.RegisterHandler = RegisterHandler;
 const LoginHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = request.body;
-    const pelajar = yield (0, pelajar_services_1.getPelajar)(reply, { username });
-    if (pelajar == null)
-        return reply.badRequest('Username is not exists.');
-    return reply.send(pelajar);
+    try {
+        const pelajar = yield models_1.Pelajar.findOne({ username });
+        if (pelajar == null)
+            return reply.badRequest('Username is not exists.');
+        return reply.send({
+            id: pelajar._id,
+            username: pelajar.username,
+            name: pelajar.name,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.LoginHandler = LoginHandler;
 const ValidationHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = request.params;
-    const pelajar = yield (0, pelajar_services_1.getPelajar)(reply, { username });
-    if (pelajar == null)
-        return reply.unauthorized('Username is not exists.');
-    return reply.send(pelajar);
+    try {
+        const pelajar = yield models_1.Pelajar.findOne({ username });
+        if (pelajar == null)
+            return reply.unauthorized('Username is not exists.');
+        return reply.send({
+            id: pelajar._id,
+            username: pelajar.username,
+            name: pelajar.name,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.ValidationHandler = ValidationHandler;

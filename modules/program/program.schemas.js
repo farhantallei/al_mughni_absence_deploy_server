@@ -9,6 +9,7 @@ exports.GetProgramListSchema = {
         200: typebox_1.Type.Array(typebox_1.Type.Object({
             id: data_type_1.DataType.id,
             pengajarId: typebox_1.Type.Union([data_type_1.DataType.id, typebox_1.Type.Null()]),
+            pengajarName: data_type_1.DataType.string,
             name: typebox_1.Type.String(),
             individual: typebox_1.Type.Boolean(),
             pengajar: typebox_1.Type.Boolean(),

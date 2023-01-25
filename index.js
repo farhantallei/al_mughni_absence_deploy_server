@@ -22,15 +22,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importStar(require("./app"));
 const env_1 = require("./env");
 (0, app_1.addPlugins)();
 (0, app_1.addRoutes)();
-app_1.default.listen({ port: env_1.PORT }, (err, address) => {
-    if (err) {
-        console.error(err.message);
-        return process.exit(1);
-    }
-    console.log(`\x1b[1m\x1b[33m[fastify] \x1b[0mServer is running at \x1b[1m\x1b[34m${address}\x1b[0m`);
+mongoose_1.default.set('strictQuery', false);
+mongoose_1.default.set('strictPopulate', true);
+mongoose_1.default
+    .connect(env_1.DATABASE_URL)
+    .then(() => {
+    app_1.default.listen({ port: env_1.PORT, host: '192.168.1.12' }, (err, address) => {
+        if (err) {
+            console.error(err.message);
+            return process.exit(1);
+        }
+        console.log(`\x1b[1m\x1b[33m[fastify] \x1b[0mServer is running at \x1b[1m\x1b[34m${address}\x1b[0m`);
+    });
+})
+    .catch((err) => {
+    console.error(err.message);
+    return process.exit(1);
 });

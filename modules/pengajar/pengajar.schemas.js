@@ -26,6 +26,7 @@ exports.RegisterPelajarSchema = {
             pelajarId: data_type_1.DataType.id,
             pengajarId: data_type_1.DataType.id,
             programId: data_type_1.DataType.id,
+            pengajarName: data_type_1.DataType.string,
             programStatus: typebox_1.Type.Union([
                 typebox_1.Type.Literal('available'),
                 typebox_1.Type.Literal('unavailable'),

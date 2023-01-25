@@ -21,41 +21,101 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateAbsentHandler = exports.AddAbsentHandler = exports.GetAbsentHandler = void 0;
-const absent_services_1 = require("./absent.services");
+const models_1 = require("../../models");
+const formatDate_1 = require("../../utils/formatDate");
 const GetAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    const _a = request.query, { date } = _a, rest = __rest(_a, ["date"]);
-    return yield (0, absent_services_1.getAbsent)(reply, Object.assign({ date: new Date(date) }, rest));
+    var _a;
+    const _b = request.query, { date } = _b, rest = __rest(_b, ["date"]);
+    try {
+        const absent = yield models_1.Absent.findOne(Object.assign({ date: new Date(date) }, rest));
+        if (!absent)
+            return reply.notFound('Absent is not found.');
+        return reply.send({
+            id: absent._id.toString(),
+            pengajarId: ((_a = absent.pengajarId) === null || _a === void 0 ? void 0 : _a.toString()) || null,
+            programId: absent.programId.toString(),
+            date: (0, formatDate_1.formatDate)(absent.date),
+            present: absent.present,
+            reason: absent.reason || null,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.GetAbsentHandler = GetAbsentHandler;
 const AddAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    const _b = request.body, { pelajarId, programId, date, present, reason } = _b, rest = __rest(_b, ["pelajarId", "programId", "date", "present", "reason"]);
-    const isAbsentExists = yield (0, absent_services_1.checkAbsent)(reply, {
-        pelajarId,
-        programId,
-        date: new Date(date),
-    });
-    if (isAbsentExists)
-        return reply.badRequest('Cannot modify existing absent.');
-    if (present === false && reason == null)
-        return reply.badRequest('Fill the reason.');
-    const absent = yield (0, absent_services_1.addAbsent)(reply, Object.assign({ pelajarId,
-        programId, date: new Date(date), present,
-        reason }, rest));
-    return reply.code(201).send(absent);
+    const { pelajarId, pengajarId, programId, date, present, reason } = request.body;
+    try {
+        const isAbsentExists = yield models_1.Absent.findOne({
+            pelajarId,
+            programId,
+            date: new Date(date),
+        });
+        if (isAbsentExists)
+            return reply.badRequest('Cannot modify existing absent.');
+        if (!present && reason == null)
+            return reply.badRequest('Fill the reason.');
+        const newAbsent = yield models_1.Absent.create({
+            pelajarId,
+            pengajarId,
+            programId,
+            date: new Date(date),
+            present,
+            reason,
+        });
+        const pengajar = yield models_1.Pengajar.findById(newAbsent.pengajarId);
+        return reply.code(201).send({
+            id: newAbsent._id.toString(),
+            pengajarId: (pengajar === null || pengajar === void 0 ? void 0 : pengajar._id.toString()) || null,
+            programId: newAbsent.programId.toString(),
+            date: (0, formatDate_1.formatDate)(newAbsent.date),
+            present: newAbsent.present,
+            reason: newAbsent.reason || null,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.AddAbsentHandler = AddAbsentHandler;
 const UpdateAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    const _c = request.body, { pelajarId, programId, date, present, reason } = _c, rest = __rest(_c, ["pelajarId", "programId", "date", "present", "reason"]);
-    const isAbsentExists = yield (0, absent_services_1.checkAbsent)(reply, {
-        pelajarId,
-        programId,
-        date: new Date(date),
-    });
-    if (!isAbsentExists)
-        return reply.badRequest('Absent is not found.');
-    if (!present && reason == null)
-        return reply.badRequest('Fill the reason.');
-    return yield (0, absent_services_1.updateAbsent)(reply, Object.assign({ pelajarId,
-        programId, date: new Date(date), present, reason: present ? null : reason }, rest));
+    var _c;
+    const { pelajarId, pengajarId, programId, date, present, reason } = request.body;
+    try {
+        const absent = yield models_1.Absent.findOne({
+            pelajarId,
+            programId,
+            date: new Date(date),
+        });
+        if (!absent)
+            return reply.notFound('Absent is not found.');
+        if (!present && reason == null)
+            return reply.badRequest('Fill the reason.');
+        const newAbsent = {
+            pelajarId,
+            pengajarId,
+            programId,
+            date: new Date(date),
+            present,
+            reason: present ? null : reason,
+        };
+        yield models_1.Absent.findOneAndUpdate({
+            pelajarId,
+            programId,
+            date: new Date(date),
+        }, newAbsent, { new: true });
+        return reply.send({
+            id: absent._id.toString(),
+            pengajarId: ((_c = absent.pengajarId) === null || _c === void 0 ? void 0 : _c.toString()) || null,
+            programId,
+            date: (0, formatDate_1.formatDate)(newAbsent.date),
+            present,
+            reason: newAbsent.reason || null,
+        });
+    }
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.UpdateAbsentHandler = UpdateAbsentHandler;

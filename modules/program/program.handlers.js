@@ -10,101 +10,121 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetProgramListHandler = void 0;
-const program_services_1 = require("./program.services");
+const models_1 = require("../../models");
+const formatDate_1 = require("../../utils/formatDate");
 const GetProgramListHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
     const { pelajarId } = request.params;
-    const programs = yield (0, program_services_1.getProgram)(reply, { pelajarId });
-    let result = [];
-    for (let i = 0; i < programs.length; i++) {
-        let presentStatus = 'alpha';
-        let programStatus = 'available';
-        const absent = yield (0, program_services_1.getAbsentByProgramId)(reply, {
-            pelajarId,
-            programId: programs[i].id,
-        });
-        if (absent == null)
-            presentStatus = 'alpha';
-        else if (absent.present)
-            presentStatus = 'present';
-        else
-            presentStatus = 'absent';
-        if (programs[i].individual) {
+    try {
+        const programs = yield models_1.Program.find();
+        let result = [];
+        for (let i = 0; i < programs.length; i++) {
+            let presentStatus = 'alpha';
+            let programStatus = 'available';
+            const absent = yield models_1.Absent.findOne({
+                pelajarId,
+                programId: programs[i]._id,
+                date: new Date((0, formatDate_1.formatDate)(new Date())),
+            });
+            if (absent == null)
+                presentStatus = 'alpha';
+            else if (absent.present)
+                presentStatus = 'present';
+            else
+                presentStatus = 'absent';
+            if (programs[i].individual) {
+                result.push({
+                    id: programs[i].id,
+                    pengajarId: null,
+                    pengajarName: '',
+                    name: programs[i].name,
+                    individual: true,
+                    pengajar: false,
+                    presentStatus,
+                    programStatus,
+                    reason: (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
+                });
+                continue;
+            }
+            const schedulesProgram = yield models_1.Schedule.find({
+                programId: programs[i]._id,
+                date: new Date((0, formatDate_1.formatDate)(new Date())),
+            });
+            const isPengajar = yield models_1.Pengajar.findOne({
+                pelajarId,
+                programId: programs[i]._id,
+            });
+            if (isPengajar) {
+                const schedules = schedulesProgram.filter(({ pengajarId }) => pengajarId.toString() === pelajarId);
+                const programStatus = schedules.length > 0
+                    ? schedules[0].available
+                        ? 'available'
+                        : 'alibi'
+                    : 'unavailable';
+                const pengajar = yield models_1.Pelajar.findById(pelajarId);
+                if (!pengajar)
+                    return reply.badRequest('Pengajar is not found.');
+                result.push({
+                    id: programs[i]._id,
+                    pengajarId: pelajarId,
+                    pengajarName: pengajar.name,
+                    name: programs[i].name,
+                    individual: false,
+                    pengajar: true,
+                    presentStatus,
+                    programStatus,
+                    reason: schedules.length > 0 && schedules[0].reason != null
+                        ? schedules[0].reason
+                        : (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
+                });
+                continue;
+            }
+            const registeredPelajar = yield models_1.PelajarOnPengajar.findOne({
+                pelajarId,
+                programId: programs[i]._id,
+            });
+            console.log(registeredPelajar);
+            if (registeredPelajar) {
+                const schedules = schedulesProgram.filter(({ pengajarId }) => pengajarId === registeredPelajar.pengajarId);
+                const programStatus = schedules.length > 0
+                    ? schedules[0].available
+                        ? 'available'
+                        : 'alibi'
+                    : 'unavailable';
+                const pengajar = yield models_1.Pelajar.findById(registeredPelajar.pengajarId);
+                if (!pengajar)
+                    return reply.badRequest('Pengajar is not found.');
+                result.push({
+                    id: programs[i]._id.toString(),
+                    pengajarId: registeredPelajar.pengajarId.toString(),
+                    pengajarName: pengajar.name,
+                    name: programs[i].name,
+                    individual: false,
+                    pengajar: false,
+                    presentStatus,
+                    programStatus,
+                    reason: schedules.length > 0 && schedules[0].reason != null
+                        ? schedules[0].reason
+                        : (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
+                });
+                continue;
+            }
             result.push({
                 id: programs[i].id,
                 pengajarId: null,
+                pengajarName: '',
                 name: programs[i].name,
-                individual: true,
+                individual: false,
                 pengajar: false,
                 presentStatus,
-                programStatus,
+                programStatus: 'unavailable',
                 reason: (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
             });
-            continue;
         }
-        const registeredPelajar = yield (0, program_services_1.getPelajarByProgramId)(reply, {
-            pelajarId,
-            programId: programs[i].id,
-        });
-        const schedulesProgram = yield (0, program_services_1.getSchedulesByProgramId)(reply, {
-            programId: programs[i].id,
-        });
-        const isPengajar = yield (0, program_services_1.checkPengajarByPelajarId)(reply, {
-            pelajarId,
-            programId: programs[i].id,
-        });
-        if (isPengajar) {
-            const schedules = schedulesProgram.filter(({ pengajarId }) => pengajarId === pelajarId);
-            const programStatus = schedules.length > 0
-                ? schedules[0].available
-                    ? 'available'
-                    : 'alibi'
-                : 'unavailable';
-            result.push({
-                id: programs[i].id,
-                pengajarId: pelajarId,
-                name: programs[i].name,
-                individual: false,
-                pengajar: true,
-                presentStatus,
-                programStatus,
-                reason: schedules.length > 0 && schedules[0].reason != null
-                    ? schedules[0].reason
-                    : (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
-            });
-            continue;
-        }
-        if (registeredPelajar) {
-            const schedules = schedulesProgram.filter(({ pengajarId }) => pengajarId === registeredPelajar.pengajarId);
-            const programStatus = schedules.length > 0
-                ? schedules[0].available
-                    ? 'available'
-                    : 'alibi'
-                : 'unavailable';
-            result.push({
-                id: programs[i].id,
-                pengajarId: registeredPelajar.pengajarId,
-                name: programs[i].name,
-                individual: false,
-                pengajar: false,
-                presentStatus,
-                programStatus,
-                reason: schedules.length > 0 && schedules[0].reason != null
-                    ? schedules[0].reason
-                    : (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
-            });
-            continue;
-        }
-        result.push({
-            id: programs[i].id,
-            pengajarId: null,
-            name: programs[i].name,
-            individual: false,
-            pengajar: false,
-            presentStatus,
-            programStatus: 'unavailable',
-            reason: (absent === null || absent === void 0 ? void 0 : absent.reason) || null,
-        });
+        console.log(result);
+        return result;
     }
-    return result;
+    catch (error) {
+        return reply.internalServerError(`Error: ${error}`);
+    }
 });
 exports.GetProgramListHandler = GetProgramListHandler;
