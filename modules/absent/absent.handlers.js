@@ -24,19 +24,20 @@ exports.UpdateAbsentHandler = exports.AddAbsentHandler = exports.GetAbsentHandle
 const models_1 = require("../../models");
 const formatDate_1 = require("../../utils/formatDate");
 const GetAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const _b = request.query, { date } = _b, rest = __rest(_b, ["date"]);
+    const _a = request.query, { date } = _a, rest = __rest(_a, ["date"]);
     try {
-        const absent = yield models_1.Absent.findOne(Object.assign({ date: new Date(date) }, rest));
-        if (!absent)
-            return reply.notFound('Absent is not found.');
-        return reply.send({
-            id: absent._id.toString(),
-            pengajarId: ((_a = absent.pengajarId) === null || _a === void 0 ? void 0 : _a.toString()) || null,
-            programId: absent.programId.toString(),
-            date: (0, formatDate_1.formatDate)(absent.date),
-            present: absent.present,
-            reason: absent.reason || null,
+        return yield models_1.Absent.findOne(Object.assign({ date: new Date(date) }, rest)).then((res) => {
+            var _a;
+            if (!res)
+                return null;
+            return {
+                id: res._id.toString(),
+                pengajarId: ((_a = res.pengajarId) === null || _a === void 0 ? void 0 : _a.toString()) || null,
+                programId: res.programId.toString(),
+                date: (0, formatDate_1.formatDate)(res.date),
+                present: res.present,
+                reason: res.reason || null,
+            };
         });
     }
     catch (error) {
@@ -80,7 +81,7 @@ const AddAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, f
 });
 exports.AddAbsentHandler = AddAbsentHandler;
 const UpdateAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _b;
     const { pelajarId, pengajarId, programId, date, present, reason } = request.body;
     try {
         const absent = yield models_1.Absent.findOne({
@@ -107,7 +108,7 @@ const UpdateAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0
         }, newAbsent, { new: true });
         return reply.send({
             id: absent._id.toString(),
-            pengajarId: ((_c = absent.pengajarId) === null || _c === void 0 ? void 0 : _c.toString()) || null,
+            pengajarId: ((_b = absent.pengajarId) === null || _b === void 0 ? void 0 : _b.toString()) || null,
             programId,
             date: (0, formatDate_1.formatDate)(newAbsent.date),
             present,
