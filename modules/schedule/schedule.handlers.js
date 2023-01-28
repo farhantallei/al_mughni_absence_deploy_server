@@ -102,6 +102,7 @@ const DeleteScheduleHandler = (request, reply) => __awaiter(void 0, void 0, void
         });
         if (!schedule)
             return reply.notFound('Schedule is not found.');
+        yield models_1.Absent.deleteMany({ programId, date });
         return reply.send({
             id: schedule._id.toString(),
             pengajarId: schedule.pengajarId.toString(),
