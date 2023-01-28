@@ -82,15 +82,8 @@ const GetProgramListHandler = (request, reply) => __awaiter(void 0, void 0, void
                 pelajarId,
                 programId: programs[i]._id,
             });
-            console.log({ registeredPelajar });
             if (registeredPelajar) {
-                console.log({ schedulesProgram });
-                const schedules = schedulesProgram.filter(({ pengajarId }) => {
-                    console.log({ pengajarId_schedule: pengajarId });
-                    console.log({ pengajarId_pelajar: registeredPelajar.pengajarId });
-                    return (pengajarId.toString() === registeredPelajar.pengajarId.toString());
-                });
-                console.log({ schedules });
+                const schedules = schedulesProgram.filter(({ pengajarId }) => pengajarId.toString() === registeredPelajar.pengajarId.toString());
                 const programStatus = schedules.length > 0
                     ? schedules[0].available
                         ? 'available'
