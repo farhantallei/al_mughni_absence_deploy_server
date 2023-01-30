@@ -63,7 +63,7 @@ const AddAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0, f
             programId,
             date: new Date(date),
             present,
-            reason,
+            reason: reason === null || reason === void 0 ? void 0 : reason.trim(),
         });
         const pengajar = yield models_1.Pengajar.findById(newAbsent.pengajarId);
         return reply.code(201).send({
@@ -99,7 +99,7 @@ const UpdateAbsentHandler = (request, reply) => __awaiter(void 0, void 0, void 0
             programId,
             date: new Date(date),
             present,
-            reason: present ? null : reason,
+            reason: present ? null : reason === null || reason === void 0 ? void 0 : reason.trim(),
         };
         yield models_1.Absent.findOneAndUpdate({
             pelajarId,

@@ -17,6 +17,10 @@ const scheduleRoutes = (route) => __awaiter(void 0, void 0, void 0, function* ()
         schema: schedule_schemas_1.GetScheduleSchema,
         handler: schedule_handlers_1.GetScheduleHandler,
     });
+    route.get('/:programId/:pengajarId', {
+        schema: schedule_schemas_1.GetAttendanceSchema,
+        handler: schedule_handlers_1.GetAttendanceHandler,
+    });
     route.post('/', {
         schema: schedule_schemas_1.AddScheduleSchema,
         handler: schedule_handlers_1.AddScheduleHandler,
