@@ -17,7 +17,10 @@ const RegisterHandler = (request, reply) => __awaiter(void 0, void 0, void 0, fu
         const pelajar = yield models_1.Pelajar.findOne({ username });
         if (pelajar)
             return reply.badRequest('Username is already taken.');
-        const newPelajar = yield models_1.Pelajar.create({ username, name });
+        const newPelajar = yield models_1.Pelajar.create({
+            username: username.trim(),
+            name,
+        });
         return reply.code(201).send({
             id: newPelajar._id,
             username: newPelajar.username,
@@ -32,7 +35,7 @@ exports.RegisterHandler = RegisterHandler;
 const LoginHandler = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = request.body;
     try {
-        const pelajar = yield models_1.Pelajar.findOne({ username });
+        const pelajar = yield models_1.Pelajar.findOne({ username: username.trim() });
         if (pelajar == null)
             return reply.badRequest('Username is not exists.');
         return reply.send({
