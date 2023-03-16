@@ -41,7 +41,7 @@ const GetAttendanceHandler = (request, reply) => __awaiter(void 0, void 0, void 
             programId,
             date: {
                 $gte: new Date(year, month, 1),
-                $lte: new Date(year, month, new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate()),
+                $lte: new Date(year, month, new Date(year, month + 1, 0).getDate()),
             },
         });
         const paraPelajar = yield models_1.PelajarOnPengajar.find({
